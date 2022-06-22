@@ -1,4 +1,5 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default {
 	input: 'src/game.js',
@@ -6,5 +7,5 @@ export default {
 		file: 'public/index.js',
 		format: 'esm',
 	},
-	plugins: [nodeResolve()],
+	plugins: [nodeResolve(), commonjs()],
 };

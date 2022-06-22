@@ -27,6 +27,19 @@ import { OctreeHelper } from 'three/examples/jsm/helpers/OctreeHelper';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
 import { Capsule } from 'three/examples/jsm/math/Capsule';
 
+let roomKey;
+let player;
+
+const socket = io();
+
+socket.on('new player', (playerKey, newRoomKey) => {
+	roomKey = newRoomKey;
+	if (newRoomKey) {
+		player = playerKey;
+	}
+	console.log('new player ', playerKey, newRoomKey);
+});
+
 const gamepads = {};
 
 function getGamepad(index) {
@@ -412,6 +425,34 @@ export function init() {
 		gui.add({ debug: false }, 'debug').onChange(function (value) {
 			helper.visible = value;
 		});
+
+		gui.add({ player: 'player_name' }, 'player').onChange((playerName) => {
+			player = playerName;
+		});
+
+		gui.add({ room: 'room_key' }, 'room').onChange((room) => {
+			roomKey = room;
+		});
+		gui.add(
+			{
+				create: () => {
+					socket.emit('create room', roomKey, player);
+				},
+			},
+			'create'
+		);
+		let joinKey;
+		gui.add({ joinKey: 'join_key' }, 'joinKey').onChange((newJoinKey) => {
+			joinKey = newJoinKey;
+		});
+		gui.add(
+			{
+				join: () => {
+					socket.emit('join room', joinKey, player);
+				},
+			},
+			'join'
+		);
 
 		animate();
 	});
