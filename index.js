@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
 	});
 });
 
-const port = process.env.NODE_ENV === 'prod' ? 80 : 3000;
+const port = process.env.NODE_ENV === 'prod' ? process.env.PORT : 3000;
 server.listen(port, () => {
 	console.log(`listening on *:${port}`);
 });
