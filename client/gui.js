@@ -1,0 +1,39 @@
+import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
+import { CLIENT_CREATE_LOBBY, CLIENT_JOIN_LOBBY } from '../utils/events';
+
+const guiData = {
+	username: null,
+	created: false,
+	joinFromLocal: false,
+};
+
+export function initGUI(socket) {
+	const gui = new GUI({ width: 200, title: 'Menu' });
+	gui.add({ username: 'username' }, 'username').onChange((username) => {
+		guiData.username = username;
+	});
+
+	const folder = gui.addFolder('Create');
+	const folderParams = {
+		lobbyName: 'lobbyName',
+		create() {
+			guiData.created = true;
+			socket.emit(CLIENT_CREATE_LOBBY, guiData.username, folderParams.lobbyName);
+		},
+	};
+
+	folder.add(folderParams, 'lobbyName');
+	folder.add(folderParams, 'create');
+
+	const joinFolder = gui.addFolder('Join');
+	const joinFolderParams = {
+		joinKey: 'joinKey',
+		join() {
+			guiData.joinFromLocal = true;
+			socket.emit(CLIENT_JOIN_LOBBY, guiData.username, joinFolderParams.joinKey);
+		},
+	};
+
+	joinFolder.add(joinFolderParams, 'joinKey');
+	joinFolder.add(joinFolderParams, 'join');
+}
