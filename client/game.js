@@ -24,23 +24,20 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Octree } from 'three/examples/jsm/math/Octree';
 import { OctreeHelper } from 'three/examples/jsm/helpers/OctreeHelper';
 
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
 import { Capsule } from 'three/examples/jsm/math/Capsule';
 
-let roomKey;
-let player;
+import { initGUI } from './gui';
+import { registerLobbyHandler } from './lobby';
 
 const socket = io();
+registerLobbyHandler(socket);
+initGUI(socket);
 
-socket.on('new player', (playerKey, newRoomKey) => {
-	roomKey = newRoomKey;
-	if (newRoomKey) {
-		player = playerKey;
-	}
-	console.log('new player ', playerKey, newRoomKey);
-});
+const FLOOR = -1.75;
 
-const gamepads = {};
+const scene = new Scene();
+
+const playerGroup = new Group();
 
 function getGamepad(index) {
 	return navigator.getGamepads()[index];
@@ -55,8 +52,6 @@ function getGamepad(index) {
  */
 
 const loader = new GLTFLoader().setPath('./models/');
-
-const FLOOR = -1.75;
 
 const assetMap = {};
 
@@ -91,13 +86,10 @@ export function spawnZombie(scene, type = ZOMBIES.COP) {
 	zombies.push({ mesh: zombie, capsule, update });
 }
 
-const playerGroup = new Group();
-
 export function init() {
 	const container = document.getElementById('game-container');
 
 	const clock = new Clock();
-	const scene = new Scene();
 	scene.background = new Color(0x88ccee);
 	scene.fog = new Fog(0x88ccee, 0, 50);
 
@@ -420,39 +412,6 @@ export function init() {
 		const helper = new OctreeHelper(worldOctree);
 		helper.visible = false;
 		scene.add(helper);
-
-		const gui = new GUI({ width: 200 });
-		gui.add({ debug: false }, 'debug').onChange(function (value) {
-			helper.visible = value;
-		});
-
-		gui.add({ player: 'player_name' }, 'player').onChange((playerName) => {
-			player = playerName;
-		});
-
-		gui.add({ room: 'room_key' }, 'room').onChange((room) => {
-			roomKey = room;
-		});
-		gui.add(
-			{
-				create: () => {
-					socket.emit('create room', roomKey, player);
-				},
-			},
-			'create'
-		);
-		let joinKey;
-		gui.add({ joinKey: 'join_key' }, 'joinKey').onChange((newJoinKey) => {
-			joinKey = newJoinKey;
-		});
-		gui.add(
-			{
-				join: () => {
-					socket.emit('join room', joinKey, player);
-				},
-			},
-			'join'
-		);
 
 		animate();
 	});
