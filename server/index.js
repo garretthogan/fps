@@ -2,12 +2,11 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const server = http.createServer(app);
-const WebSockets = require('uWebSockets.js');
-const sslApp = WebSockets.SSLApp();
-const ws = sslApp.ws('/*', {
-	idleTimeout: 32,
-});
-console.log({ ws });
+// const WebSockets = require('uWebSockets.js');
+// const sslApp = WebSockets.SSLApp();
+// const ws = sslApp.ws('/*', {
+// 	idleTimeout: 32,
+// });
 
 const { Server } = require('socket.io');
 const { serverLobbyHandler } = require('./serverLobbyHandler');
