@@ -6,6 +6,10 @@ const {
 	SERVER_PLAYER_JOINED,
 	FAILED_TO_JOIN,
 	NO_LOBBY,
+	CLIENT_UPDATE_POSITION,
+	SERVER_UPDATE_POSITION,
+	CLIENT_START_GAME,
+	SERVER_START_GAME,
 } = require('../utils/events');
 
 const serverLobbies = {};
@@ -35,6 +39,12 @@ function serverLobbyHandler(io, socket) {
 			socket.join(pid);
 			io.to(pid).emit(FAILED_TO_JOIN, NO_LOBBY);
 		}
+	});
+	socket.on(CLIENT_UPDATE_POSITION, (lobbyKey, pid, position) => {
+		io.to(lobbyKey).emit(SERVER_UPDATE_POSITION, pid, position);
+	});
+	socket.on(CLIENT_START_GAME, (lobbyKey) => {
+		io.to(lobbyKey).emit(SERVER_START_GAME, serverLobbies[lobbyKey].players);
 	});
 }
 

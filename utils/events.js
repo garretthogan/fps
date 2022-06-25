@@ -8,6 +8,7 @@ const events = {
 	CLIENT_CREATE_ROOM: 'client create room',
 	SERVER_PLAYER_JOINED: 'server player joined',
 	CLIENT_UPDATE_POSITION: 'client update position',
+	SERVER_UPDATE_POSITION: 'server update position',
 	SERVER_ROOM_CREATED: 'server room created',
 	CLIENT_CREATE_LOBBY: 'client create lobby',
 	SERVER_LOBBY_CREATED: 'server lobby created',
