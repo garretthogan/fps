@@ -15,8 +15,6 @@ import {
 	IcosahedronGeometry,
 	AnimationMixer,
 	Group,
-	CapsuleGeometry,
-	MeshStandardMaterial,
 } from 'three';
 
 import Stats from 'three/examples/jsm/libs/stats.module';
@@ -29,9 +27,12 @@ import { OctreeHelper } from 'three/examples/jsm/helpers/OctreeHelper';
 import { Capsule } from 'three/examples/jsm/math/Capsule';
 
 import { initGUI } from './gui';
-import { getKey, getLocalPlayerId, getPlayerTransforms, registerLobbyHandler } from './lobby';
+import { getKey, getLocalPlayerId, registerLobbyHandler } from './lobby';
 import throttle from 'lodash.throttle';
 import { CLIENT_UPDATE_POSITION } from '../utils/events';
+import { spawnRemotePlayers, updateRemotePlayers } from './player';
+
+const loader = new GLTFLoader().setPath('./models/');
 
 const tickRateMs = 200;
 
@@ -49,31 +50,12 @@ function getGamepad(index) {
 	return navigator.getGamepads()[index];
 }
 
-function spawnRemotePlayer(pid) {
-	const geometry = new CapsuleGeometry(0.3, 0.75, 10, 20);
-	const material = new MeshStandardMaterial({ color: 0x00ff00 });
-	return { owner: pid, mesh: new Mesh(geometry, material) };
-}
-
 export function initGame(players) {
-	const remotePlayers = players.filter((pid) => pid !== getLocalPlayerId()).map((pid) => spawnRemotePlayer(pid));
-	remotePlayers.map((rp) => {
-		const transforms = getPlayerTransforms();
-		scene.add(rp.mesh);
+	const remotePlayers = players.filter((pid) => pid !== getLocalPlayerId());
+	spawnRemotePlayers(loader, scene, remotePlayers);
+	updateRemotePlayers();
 
-		const position = transforms[rp.owner];
-		rp.mesh.position.set(position.x, position.y, position.z);
-	});
-
-	const update = () => {
-		const transforms = getPlayerTransforms();
-		remotePlayers.map((p) => {
-			const t = transforms[p.owner];
-			p.mesh.position.set(t.x, t.y, t.z);
-		});
-	};
-
-	setInterval(update, tickRateMs);
+	setInterval(updateRemotePlayers, tickRateMs);
 }
 
 /**
@@ -83,8 +65,6 @@ export function initGame(players) {
  * - combat, loot, prep phases
  * - multiplayer
  */
-
-const loader = new GLTFLoader().setPath('./models/');
 
 const assetMap = {};
 
@@ -126,7 +106,7 @@ export function init() {
 	scene.background = new Color(0x88ccee);
 	scene.fog = new Fog(0x88ccee, 0, 50);
 
-	const camera = new PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.01, 1000);
+	const camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01, 1000);
 	playerGroup.add(camera);
 
 	const fillLight1 = new HemisphereLight(0x4488bb, 0x002244, 0.5);
