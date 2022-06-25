@@ -42,7 +42,7 @@ export function initGUI(socket) {
 		{
 			start: () => {
 				const key = getKey();
-				if (!key) {
+				if (!key || !guiData.created) {
 					console.log('create a lobby first!');
 				} else {
 					console.log('start game');
