@@ -1,5 +1,6 @@
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
-import { CLIENT_CREATE_LOBBY, CLIENT_JOIN_LOBBY } from '../utils/events';
+import { CLIENT_CREATE_LOBBY, CLIENT_JOIN_LOBBY, CLIENT_START_GAME } from '../utils/events';
+import { getKey } from './lobby';
 
 const guiData = {
 	username: null,
@@ -36,4 +37,19 @@ export function initGUI(socket) {
 
 	joinFolder.add(joinFolderParams, 'joinKey');
 	joinFolder.add(joinFolderParams, 'join');
+
+	gui.add(
+		{
+			start: () => {
+				const key = getKey();
+				if (!key) {
+					console.log('create a lobby first!');
+				} else {
+					console.log('start game');
+					socket.emit(CLIENT_START_GAME, key);
+				}
+			},
+		},
+		'start'
+	);
 }
