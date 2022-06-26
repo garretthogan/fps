@@ -45,6 +45,7 @@ export function registerLobbyHandler(socket) {
 		if (!lobbyData.localPlayerId) {
 			lobbyData.localPlayerId = pid;
 			setLocalPlayerId(pid);
+			setJoinKey(serverLobbyData.joinKey);
 		}
 
 		console.log('player joined lobby', pid, lobbyData);
