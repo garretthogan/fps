@@ -2,6 +2,7 @@ import copy from 'copy-to-clipboard';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
 import { SERVER_LOBBY_CREATED, SERVER_PLAYER_JOINED, SERVER_START_GAME, SERVER_UPDATE_POSITION } from '../utils/events';
 import { initGame } from './game';
+import { setJoinKey, setLocalPlayerId } from './gui';
 import { updatePosition } from './player';
 
 const lobbyData = {
@@ -27,8 +28,10 @@ export function registerLobbyHandler(socket) {
 		lobbyData.owner = serverLobbyData.owner;
 		lobbyData.players = serverLobbyData.players;
 		lobbyData.joinKey = serverLobbyData.joinKey;
-		lobbyData.localPlayerId = lobbyData.owner;
+		lobbyData.localPlayerId = serverLobbyData.owner;
 
+		setJoinKey(lobbyData.joinKey);
+		setLocalPlayerId(lobbyData.owner);
 		copy(lobbyData.joinKey);
 
 		console.log('join key copied to clipdboard!', lobbyData.joinKey);
@@ -41,6 +44,7 @@ export function registerLobbyHandler(socket) {
 
 		if (!lobbyData.localPlayerId) {
 			lobbyData.localPlayerId = pid;
+			setLocalPlayerId(pid);
 		}
 
 		console.log('player joined lobby', pid, lobbyData);
