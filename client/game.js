@@ -34,7 +34,7 @@ import { spawnRemotePlayers, updateRemotePlayers } from './player';
 
 const loader = new GLTFLoader().setPath('./models/');
 
-const tickRateMs = 200;
+const tickRateMs = 100;
 
 const socket = io();
 registerLobbyHandler(socket);
