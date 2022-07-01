@@ -525,4 +525,4 @@ export function init() {
 	}
 }
 
-init();
+// init();

@@ -1,5 +1,4 @@
 import copy from 'copy-to-clipboard';
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
 import { SERVER_LOBBY_CREATED, SERVER_PLAYER_JOINED, SERVER_START_GAME, SERVER_UPDATE_POSITION } from '../utils/events';
 import { initGame } from './game';
 import { setJoinKey, setLocalPlayerId } from './gui';
@@ -22,7 +21,6 @@ export function getKey() {
 }
 
 export function registerLobbyHandler(socket) {
-	const gui = new GUI({ width: 200, title: 'Join Code' });
 	socket.on(SERVER_LOBBY_CREATED, (serverLobbyData) => {
 		lobbyData.lobbyName = serverLobbyData.lobbyName;
 		lobbyData.owner = serverLobbyData.owner;
