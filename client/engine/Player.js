@@ -14,7 +14,7 @@ export default class Player {
 		document.body.addEventListener('keydown', (e) => this.onKeyDown(e.code));
 		document.body.addEventListener('keyup', (e) => this.onKeyUp(e.code));
 		document.body.addEventListener('mousedown', () => {
-			document.body.requestPointerLock();
+			// document.body.requestPointerLock();
 			// document.body.requestFullscreen();
 		});
 		document.body.addEventListener('mousemove', (e) => this.onMouseMove(e.movementX, e.movementY));

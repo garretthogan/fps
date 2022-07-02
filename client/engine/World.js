@@ -108,8 +108,8 @@ export default class World {
 	}
 
 	onWindowResize() {
-		this.playerCamera.aspect = window.innerWidth / window.innerHeight;
-		this.playerCamera.updateProjectionMatrix();
+		this.player.camera.aspect = window.innerWidth / window.innerHeight;
+		this.player.camera.updateProjectionMatrix();
 
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 	}
