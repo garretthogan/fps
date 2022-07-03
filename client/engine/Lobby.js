@@ -2,8 +2,7 @@ import copy from 'copy-to-clipboard';
 import { SERVER_LOBBY_CREATED, SERVER_PLAYER_JOINED } from '../../utils/events.js';
 
 export default class LobbyManager {
-	constructor(socket) {
-		this.socket = socket;
+	constructor() {
 		this.lobbyName = null;
 		this.creator = null;
 		this.username = null;
@@ -13,16 +12,16 @@ export default class LobbyManager {
 		this.joinFromLocal = false;
 		this.created = false;
 
-		socket.on(SERVER_LOBBY_CREATED, (serverLobbyData) => {
-			this.lobbyName = serverLobbyData.lobbyName;
-			this.creator = serverLobbyData.owner;
-			this.connectedClients = serverLobbyData.players;
-			this.joinCode = serverLobbyData.joinKey;
-			this.localClientId = serverLobbyData.owner;
+		// socket.on(SERVER_LOBBY_CREATED, (serverLobbyData) => {
+		// 	this.lobbyName = serverLobbyData.lobbyName;
+		// 	this.creator = serverLobbyData.owner;
+		// 	this.connectedClients = serverLobbyData.players;
+		// 	this.joinCode = serverLobbyData.joinKey;
+		// 	this.localClientId = serverLobbyData.owner;
 
-			copy(this.joinCode);
+		// 	copy(this.joinCode);
 
-			console.log('join code copied to clipdboard!', this.joinCode, this.localClientId);
-		});
+		// 	console.log('join code copied to clipdboard!', this.joinCode, this.localClientId);
+		// });
 	}
 }

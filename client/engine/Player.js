@@ -11,8 +11,8 @@ const FLOOR = -1.75;
 const GRAVITY = 30;
 
 export default class Player {
-	constructor(scene, world, socket) {
-		this.socket = socket;
+	constructor(scene, world, ws) {
+		this.ws = ws;
 		this.world = world;
 
 		document.body.addEventListener('keydown', (e) => this.onKeyDown(e.code));
@@ -45,7 +45,13 @@ export default class Player {
 	replicatePosition() {
 		const lobby = this.world.lobby;
 		if (lobby.joinCode && lobby.localClientId) {
-			this.socket.emit(CLIENT_UPDATE_POSITION, lobby.joinCode, lobby.localClientId, this.root.position);
+			this.ws.send(
+				JSON.stringify({
+					type: CLIENT_UPDATE_POSITION,
+					data: { lobbyId: lobby.joinCode, clientId: lobby.localClientId, position: this.root.position },
+				})
+			);
+			// this.socket.emit(CLIENT_UPDATE_POSITION, lobby.joinCode, lobby.localClientId, this.root.position);
 		}
 	}
 

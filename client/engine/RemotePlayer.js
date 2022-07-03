@@ -1,7 +1,6 @@
 import { Object3D, Vector3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Capsule } from 'three/examples/jsm/math/Capsule';
-import { SERVER_PLAYER_JOINED, SERVER_UPDATE_POSITION } from '../../utils/events';
 
 function loadMesh(root, file) {
 	const loader = new GLTFLoader().setPath('./models/');
@@ -38,33 +37,5 @@ export class RemotePlayer {
 		this.root.add(this.meshParent);
 
 		loadMesh(this.meshParent, 'drone.glb');
-	}
-}
-
-export class RemotePlayerManager {
-	constructor(world, lobby, socket) {
-		this.remotePlayerTransforms = {};
-		socket.on(SERVER_PLAYER_JOINED, (clientId, serverLobbyData) => {
-			if (!lobby.localClientId) {
-				lobby.lobbyName = serverLobbyData.joinKey;
-				lobby.creator = serverLobbyData.owner;
-				lobby.connectedClients = serverLobbyData.players;
-				lobby.joinCode = serverLobbyData.joinKey;
-				lobby.localClientId = clientId;
-				const players = serverLobbyData.players;
-				console.log({ players });
-				players.filter((pid) => pid !== clientId).map((pid) => world.spawnRemotePlayer(pid));
-				// spawn players already here
-			} else {
-				const rp = world.spawnRemotePlayer(clientId);
-				this.remotePlayerTransforms[clientId] = rp.root;
-			}
-		});
-
-		socket.on(SERVER_UPDATE_POSITION, (clientId, position) => {
-			if (this.remotePlayerTransforms[clientId]) {
-				this.remotePlayerTransforms[clientId].position.copy(position);
-			}
-		});
 	}
 }
