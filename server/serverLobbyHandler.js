@@ -19,9 +19,7 @@ function generate() {
 }
 
 function serverLobbyHandler(io, socket) {
-	console.log('server lobby handler initialized');
 	socket.on(CLIENT_CREATE_LOBBY, (username, lobbyName) => {
-		console.log('lobby', lobbyName, 'created by', username);
 		const pid = `${username}_${generate()}`;
 		const joinKey = `${lobbyName}_${generate()}`;
 

@@ -64,7 +64,7 @@ function loadLevel(scene, worldOctree, file = 'collision-world.glb') {
 }
 
 export default class World {
-	constructor(socket, lobby) {
+	constructor(ws, lobby) {
 		this.lobby = lobby;
 		this.tickRateMs = 100;
 		window.addEventListener('resize', this.onWindowResize.bind(this));
@@ -76,7 +76,7 @@ export default class World {
 		this.scene.background = new Color(0x88ccee);
 		this.scene.fog = new Fog(0x88ccee, 0, 50);
 
-		this.player = new Player(this.scene, this, socket);
+		this.player = new Player(this.scene, this, ws);
 
 		this.renderer = new WebGLRenderer({ antialias: true });
 		this.renderer.setPixelRatio(window.devicePixelRatio);
