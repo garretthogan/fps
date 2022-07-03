@@ -15,6 +15,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Octree } from 'three/examples/jsm/math/Octree';
 import Player from './Player';
 import { populateProjectilePool, updateProjectilePool } from './projectilePool';
+import { RemotePlayer } from './RemotePlayer';
 
 function spawnLights(scene) {
 	const fillLight = new HemisphereLight(0x4488bb, 0x002244, 0.5);
@@ -63,7 +64,9 @@ function loadLevel(scene, worldOctree, file = 'collision-world.glb') {
 }
 
 export default class World {
-	constructor() {
+	constructor(socket, lobby) {
+		this.lobby = lobby;
+		this.tickRateMs = 100;
 		window.addEventListener('resize', this.onWindowResize.bind(this));
 
 		this.clock = new Clock();
@@ -73,7 +76,7 @@ export default class World {
 		this.scene.background = new Color(0x88ccee);
 		this.scene.fog = new Fog(0x88ccee, 0, 50);
 
-		this.player = new Player(this.scene, this);
+		this.player = new Player(this.scene, this, socket);
 
 		this.renderer = new WebGLRenderer({ antialias: true });
 		this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -91,6 +94,13 @@ export default class World {
 		container.appendChild(this.renderer.domElement);
 
 		this.update = this.update.bind(this);
+	}
+
+	spawnRemotePlayer(owningClientId) {
+		const rp = new RemotePlayer(owningClientId);
+		this.scene.add(rp.root);
+
+		return rp;
 	}
 
 	update() {
