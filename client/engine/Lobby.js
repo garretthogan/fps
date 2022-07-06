@@ -75,7 +75,7 @@ export default class Lobby {
 		this.lobbyId = eventData.lobbyId;
 		this.localClientId = eventData.owner;
 		this.connectedClients = eventData.clients;
-		copy(this.lobbyId);
+		copy(`${window.location.href}${this.lobbyId}`);
 
 		console.log('you created a lobby!', this.lobbyId, this.localClientId);
 	}
