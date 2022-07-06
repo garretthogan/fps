@@ -24,7 +24,7 @@ export default class Lobby {
 		this.connectedClients = null;
 
 		const socketUrl =
-			process.env.NODE_ENV === 'dev' ? 'ws://localhost:3535' : 'ws://multiplayer-fps.herokuapp.com:3535';
+			process.env.NODE_ENV === 'dev' ? 'ws://localhost:3535' : 'wss://multiplayer-fps.herokuapp.com:3535';
 
 		console.log(socketUrl);
 		this.socket = new WebSocket(socketUrl);
