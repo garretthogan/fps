@@ -1,6 +1,6 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import dotenv from 'rollup-plugin-dotenv';
+import replace from '@rollup/plugin-replace';
 
 export default {
 	input: 'client/index.js',
@@ -8,5 +8,5 @@ export default {
 		file: 'public/index.js',
 		format: 'esm',
 	},
-	plugins: [dotenv(), nodeResolve(), commonjs()],
+	plugins: [replace({ 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) }), nodeResolve(), commonjs()],
 };
