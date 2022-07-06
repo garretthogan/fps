@@ -13,10 +13,9 @@ import {
 import { OctreeHelper } from 'three/examples/jsm/helpers/OctreeHelper';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Octree } from 'three/examples/jsm/math/Octree';
-import { SERVER_CLIENT_JOINED, SERVER_START_GAME } from '../../utils/events';
+import { SERVER_CLIENT_JOINED } from '../../utils/events';
 import Player from './Player';
 import { populateProjectilePool, updateProjectilePool } from './projectilePool';
-import { RemotePlayer } from './RemotePlayer';
 
 function spawnLights(scene) {
 	const fillLight = new HemisphereLight(0x4488bb, 0x002244, 0.5);
@@ -116,7 +115,9 @@ export default class World {
 
 		//replicate local player position
 		const position = this.player.root.position;
+		const rotation = this.player.root.rotation;
 		this.lobby.updatePlayerPosition(position);
+		this.lobby.updatePlayerRotation(rotation);
 
 		this.renderer.render(this.scene, this.player.camera);
 		requestAnimationFrame(this.update);

@@ -10,6 +10,8 @@ const {
 
 const lobbies = {};
 
+// maybe stringify lobby data to give each one a smaller footprint
+
 const createKey = () => shortid.generate().replace('_', ':');
 
 module.exports = {
