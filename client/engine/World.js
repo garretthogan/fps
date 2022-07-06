@@ -13,6 +13,7 @@ import {
 import { OctreeHelper } from 'three/examples/jsm/helpers/OctreeHelper';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Octree } from 'three/examples/jsm/math/Octree';
+import { SERVER_CLIENT_JOINED, SERVER_START_GAME } from '../../utils/events';
 import Player from './Player';
 import { populateProjectilePool, updateProjectilePool } from './projectilePool';
 import { RemotePlayer } from './RemotePlayer';
@@ -64,8 +65,10 @@ function loadLevel(scene, worldOctree, file = 'collision-world.glb') {
 }
 
 export default class World {
-	constructor(ws, lobby) {
+	constructor(lobby) {
 		this.lobby = lobby;
+		this.lobby.addEventListener(SERVER_CLIENT_JOINED, this.spawnRemotePlayer.bind(this));
+
 		this.tickRateMs = 100;
 		window.addEventListener('resize', this.onWindowResize.bind(this));
 
@@ -76,7 +79,7 @@ export default class World {
 		this.scene.background = new Color(0x88ccee);
 		this.scene.fog = new Fog(0x88ccee, 0, 50);
 
-		this.player = new Player(this.scene, this, ws);
+		this.player = new Player(this.scene, this);
 
 		this.renderer = new WebGLRenderer({ antialias: true });
 		this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -96,11 +99,9 @@ export default class World {
 		this.update = this.update.bind(this);
 	}
 
-	spawnRemotePlayer(owningClientId) {
-		const rp = new RemotePlayer(owningClientId);
+	spawnRemotePlayer(clientId) {
+		const rp = this.lobby.registerRemoteClient(clientId);
 		this.scene.add(rp.root);
-
-		return rp;
 	}
 
 	update() {
@@ -112,6 +113,10 @@ export default class World {
 
 			updateProjectilePool(dt, this.worldOctree);
 		}
+
+		//replicate local player position
+		const position = this.player.root.position;
+		this.lobby.updatePlayerPosition(position);
 
 		this.renderer.render(this.scene, this.player.camera);
 		requestAnimationFrame(this.update);
