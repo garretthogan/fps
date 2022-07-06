@@ -1,5 +1,6 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import dotenv from 'rollup-plugin-dotenv';
 
 export default {
 	input: 'client/index.js',
@@ -7,5 +8,5 @@ export default {
 		file: 'public/index.js',
 		format: 'esm',
 	},
-	plugins: [nodeResolve(), commonjs()],
+	plugins: [dotenv(), nodeResolve(), commonjs()],
 };
