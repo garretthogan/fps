@@ -3,6 +3,7 @@ import {
 	CLIENT_JOIN_LOBBY,
 	CLIENT_START_GAME,
 	CLIENT_UPDATE_POSITION,
+	CLIENT_UPDATE_ROTATION,
 	SERVER_CLIENT_JOINED,
 	SERVER_LOBBY_CREATED,
 	SERVER_UPDATE_POSITION,
@@ -18,14 +19,12 @@ export default class Lobby {
 		// players than that?
 		this.remotePlayers = {};
 
-		this.tickrate = 100;
 		this.lobbyId = null;
 		this.localClientId = null;
 		this.connectedClients = null;
 
 		const socketUrl = process.env.NODE_ENV === 'dev' ? 'ws://localhost:3000' : 'wss://multiplayer-fps.herokuapp.com';
 
-		console.log(socketUrl);
 		this.socket = new WebSocket(socketUrl);
 		this.socket.onopen = this.onOpen.bind(this);
 		this.socket.onmessage = this.onMessage.bind(this);
@@ -68,6 +67,23 @@ export default class Lobby {
 						x: position.x,
 						y: position.y,
 						z: position.z,
+					},
+				})
+			);
+		}
+	}
+
+	updatePlayerRotation(rotation) {
+		if (this.localClientId) {
+			this.socket.send(
+				JSON.stringify({
+					type: CLIENT_UPDATE_ROTATION,
+					data: {
+						lobbyId: this.lobbyId,
+						clientId: this.localClientId,
+						x: rotation.x,
+						y: rotation.y,
+						z: rotation.z,
 					},
 				})
 			);

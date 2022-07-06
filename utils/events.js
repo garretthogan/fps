@@ -16,6 +16,7 @@ const events = {
 	FAILED_TO_JOIN: 'failed to join',
 	NO_LOBBY: 'lobby does not exist',
 	SERVER_CLIENT_JOINED: 'server client joined',
+	CLIENT_UPDATE_ROTATION: 'client update rotation',
 };
 
 module.exports = events;
