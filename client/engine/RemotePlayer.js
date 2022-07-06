@@ -24,6 +24,7 @@ function loadMesh(root, file) {
 const FLOOR = -1.75;
 
 export class RemotePlayer {
+	// pass an initial position for the mesh
 	constructor(owningClientId) {
 		this.owner = owningClientId;
 

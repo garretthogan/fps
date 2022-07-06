@@ -1,7 +1,5 @@
-import throttle from 'lodash.throttle';
 import { Object3D, PerspectiveCamera, Vector3 } from 'three';
 import { Capsule } from 'three/examples/jsm/math/Capsule';
-import { CLIENT_UPDATE_POSITION } from '../../utils/events';
 import { fireProjectile } from './projectilePool';
 
 const RT = 3;
@@ -11,16 +9,11 @@ const FLOOR = -1.75;
 const GRAVITY = 30;
 
 export default class Player {
-	constructor(scene, world, ws) {
-		this.ws = ws;
+	constructor(scene, world) {
 		this.world = world;
 
 		document.body.addEventListener('keydown', (e) => this.onKeyDown(e.code));
 		document.body.addEventListener('keyup', (e) => this.onKeyUp(e.code));
-		document.body.addEventListener('mousedown', () => {
-			// document.body.requestPointerLock();
-			// document.body.requestFullscreen();
-		});
 		document.body.addEventListener('mousemove', (e) => this.onMouseMove(e.movementX, e.movementY));
 
 		this.keyCodes = {};
@@ -38,21 +31,6 @@ export default class Player {
 		this.cameraParent.add(this.camera);
 		this.root.add(this.cameraParent);
 		scene.add(this.root);
-
-		this.replicatePosition = throttle(this.replicatePosition.bind(this), this.world.tickRateMs);
-	}
-
-	replicatePosition() {
-		const lobby = this.world.lobby;
-		if (lobby.joinCode && lobby.localClientId) {
-			this.ws.send(
-				JSON.stringify({
-					type: CLIENT_UPDATE_POSITION,
-					data: { lobbyId: lobby.joinCode, clientId: lobby.localClientId, position: this.root.position },
-				})
-			);
-			// this.socket.emit(CLIENT_UPDATE_POSITION, lobby.joinCode, lobby.localClientId, this.root.position);
-		}
 	}
 
 	onMouseMove(x, y) {
@@ -199,7 +177,5 @@ export default class Player {
 
 			this.collider.translate(result.normal.multiplyScalar(result.depth));
 		}
-
-		this.replicatePosition();
 	}
 }
