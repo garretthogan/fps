@@ -70,10 +70,11 @@ export default class World {
 		this.lobby = lobby;
 		this.lobby.addEventListener(SERVER_CLIENT_JOINED, this.spawnRemotePlayer.bind(this));
 		this.lobby.addEventListener(LOAD_MAP, (serverMapName) => {
+			this.player = new Player(this.scene, this);
 			loadLevel(this.scene, this.worldOctree, `${serverMapName}.glb`);
+			this.update();
 		});
 
-		this.tickRateMs = 100;
 		window.addEventListener('resize', this.onWindowResize.bind(this));
 
 		this.clock = new Clock();
@@ -82,8 +83,6 @@ export default class World {
 		this.scene = new Scene();
 		this.scene.background = new Color(0x88ccee);
 		this.scene.fog = new Fog(0x88ccee, 0, 50);
-
-		this.player = new Player(this.scene, this);
 
 		this.renderer = new WebGLRenderer({ antialias: true });
 		this.renderer.setPixelRatio(window.devicePixelRatio);
