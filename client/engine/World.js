@@ -14,6 +14,7 @@ import { OctreeHelper } from 'three/examples/jsm/helpers/OctreeHelper';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Octree } from 'three/examples/jsm/math/Octree';
 import { LOAD_MAP, SERVER_CLIENT_JOINED } from '../../utils/events';
+import { mapScales } from '../../utils/mapMetadata';
 import Player from './Player';
 import { populateProjectilePool, updateProjectilePool } from './projectilePool';
 
@@ -71,13 +72,6 @@ export default class World {
 		this.lobby.addEventListener(SERVER_CLIENT_JOINED, this.spawnRemotePlayer.bind(this));
 		this.lobby.addEventListener(LOAD_MAP, (serverMapName) => {
 			this.player = new Player(this.scene, this, serverMapName);
-			const mapScales = {
-				'collision-world': { x: 1, y: 1, Z: 1 },
-				'art-gallery': { x: 0.01, y: 0.01, z: 0.01 },
-				'low-poly-playland': { x: 0.45, y: 0.45, z: 0.45 },
-				'scifi-repair-dock': { x: 0.2, y: 0.2, z: 0.2 },
-				'squid-game-map': { x: 0.45, y: 0.45, z: 0.45 },
-			};
 
 			loadLevel(this.scene, this.worldOctree, `${serverMapName}.glb`, mapScales[serverMapName]);
 			this.update();
