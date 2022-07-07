@@ -4,6 +4,7 @@ import {
 	CLIENT_START_GAME,
 	CLIENT_UPDATE_POSITION,
 	CLIENT_UPDATE_ROTATION,
+	LOAD_MAP,
 	SERVER_CLIENT_JOINED,
 	SERVER_LOBBY_CREATED,
 	SERVER_UPDATE_POSITION,
@@ -11,9 +12,10 @@ import {
 import { RemotePlayer } from './RemotePlayer.js';
 
 export default class Lobby {
-	constructor(joinCode) {
+	constructor(joinCode, mapName) {
+		this.mapName = mapName;
 		this.joinCode = joinCode;
-		this.events = { [`${SERVER_CLIENT_JOINED}`]: [] };
+		this.events = { [`${SERVER_CLIENT_JOINED}`]: [], [`${LOAD_MAP}`]: [] };
 
 		// maybe initialize 4-8 since there will never be more
 		// players than that?
@@ -95,19 +97,26 @@ export default class Lobby {
 		this.lobbyId = eventData.lobbyId;
 		this.localClientId = eventData.owner;
 		this.connectedClients = eventData.clients;
-		copy(`${window.location.href}${this.lobbyId}`);
+		copy(
+			process.env.NODE_ENV === 'dev'
+				? `http://localhost:3000/join/${this.lobbyId}`
+				: `https://multiplayer-fps.herokuapp.com/join/${this.lobbyId}`
+		);
 
 		console.log('you created a lobby!', this.lobbyId, this.localClientId);
 	}
 	onClientJoined(eventData) {
 		console.log('client joined', eventData.clientId);
 		if (!this.localClientId) {
+			this.mapName = eventData.mapName;
 			this.connectedClients = eventData.clients;
 			this.localClientId = eventData.clientId;
 			this.connectedClients.map((clientId) => {
 				//console.log('backspawning', clientId);
 				this.dispatch(SERVER_CLIENT_JOINED, clientId);
 			});
+			console.log('load map', this.mapName);
+			this.dispatch(LOAD_MAP, this.mapName);
 			console.log('your local id is', this.localClientId);
 		} else {
 			//console.log('spawn player for', eventData.clientId);
@@ -150,10 +159,10 @@ export default class Lobby {
 		console.log('connected');
 
 		if (this.joinCode) {
-			console.log('join lobby', this.joinCode);
 			this.socket.send(JSON.stringify({ type: CLIENT_JOIN_LOBBY, data: { lobbyId: this.joinCode } }));
 		} else {
-			this.socket.send(JSON.stringify({ type: CLIENT_START_GAME, data: {} }));
+			this.dispatch(LOAD_MAP, this.mapName);
+			this.socket.send(JSON.stringify({ type: CLIENT_START_GAME, data: { mapName: this.mapName } }));
 		}
 	}
 }

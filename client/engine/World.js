@@ -13,7 +13,7 @@ import {
 import { OctreeHelper } from 'three/examples/jsm/helpers/OctreeHelper';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Octree } from 'three/examples/jsm/math/Octree';
-import { SERVER_CLIENT_JOINED } from '../../utils/events';
+import { LOAD_MAP, SERVER_CLIENT_JOINED } from '../../utils/events';
 import Player from './Player';
 import { populateProjectilePool, updateProjectilePool } from './projectilePool';
 
@@ -39,10 +39,11 @@ function spawnLights(scene) {
 	scene.add(directionalLight);
 }
 
-function loadLevel(scene, worldOctree, file = 'collision-world.glb') {
+function loadLevel(scene, worldOctree, file) {
 	const loader = new GLTFLoader().setPath('./models/');
 	loader.load(file, (gltf) => {
 		scene.add(gltf.scene);
+		file.includes('collision-world') || gltf.scene.scale.set(0.01, 0.01, 0.01);
 
 		worldOctree.fromGraphNode(gltf.scene);
 
@@ -64,9 +65,13 @@ function loadLevel(scene, worldOctree, file = 'collision-world.glb') {
 }
 
 export default class World {
-	constructor(lobby) {
+	constructor(lobby, mapName) {
+		console.log({ mapName });
 		this.lobby = lobby;
 		this.lobby.addEventListener(SERVER_CLIENT_JOINED, this.spawnRemotePlayer.bind(this));
+		this.lobby.addEventListener(LOAD_MAP, (serverMapName) => {
+			loadLevel(this.scene, this.worldOctree, `${serverMapName}.glb`);
+		});
 
 		this.tickRateMs = 100;
 		window.addEventListener('resize', this.onWindowResize.bind(this));
@@ -90,7 +95,6 @@ export default class World {
 
 		spawnLights(this.scene);
 		populateProjectilePool(this.scene, 10);
-		loadLevel(this.scene, this.worldOctree, 'collision-world.glb');
 
 		const container = document.getElementById('game-container');
 		container.appendChild(this.renderer.domElement);
