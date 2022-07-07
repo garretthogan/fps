@@ -1,5 +1,6 @@
 import { Object3D, PerspectiveCamera, Vector3 } from 'three';
 import { Capsule } from 'three/examples/jsm/math/Capsule';
+import { mapFloorHeights } from '../../utils/mapMetadata';
 import { fireProjectile } from './projectilePool';
 
 const RT = 3;
@@ -11,14 +12,6 @@ const GRAVITY = 30;
 export default class Player {
 	constructor(scene, world, mapName) {
 		this.world = world;
-
-		const mapFloorHeights = {
-			'collision-world': 2,
-			'art-gallery': 1,
-			'low-poly-playland': 30,
-			'scifi-repair-dock': 30,
-			'squid-game-map': 30,
-		};
 
 		document.body.addEventListener('keydown', (e) => this.onKeyDown(e.code));
 		document.body.addEventListener('keyup', (e) => this.onKeyUp(e.code));
