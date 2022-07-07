@@ -14,7 +14,13 @@ export default class Player {
 		this.world = world;
 
 		document.body.addEventListener('keydown', (e) => this.onKeyDown(e.code));
-		document.body.addEventListener('keyup', (e) => this.onKeyUp(e.code));
+		document.body.addEventListener('keyup', (e) => {
+			if (e.code === 'KeyF') {
+				document.body.requestPointerLock();
+				document.body.requestFullscreen();
+			}
+			this.onKeyUp(e.code);
+		});
 		document.body.addEventListener('mousemove', (e) => this.onMouseMove(e.movementX, e.movementY));
 
 		this.keyCodes = {};
@@ -47,10 +53,6 @@ export default class Player {
 	}
 	onKeyUp(keyCode) {
 		this.keyCodes[keyCode] = false;
-		if (keyCode === 'KeyF') {
-			document.body.requestFullscreen();
-			document.body.requestPointerLock();
-		}
 	}
 
 	onRightTriggerDown() {
