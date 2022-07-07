@@ -13,7 +13,7 @@ import { RemotePlayer } from './RemotePlayer.js';
 
 export default class Lobby {
 	constructor(joinCode, mapName) {
-		this.mapName = mapName;
+		this.mapName = mapName || 'collision-world';
 		this.joinCode = joinCode;
 		this.events = { [`${SERVER_CLIENT_JOINED}`]: [], [`${LOAD_MAP}`]: [] };
 
