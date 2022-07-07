@@ -9,8 +9,16 @@ const FLOOR = 1;
 const GRAVITY = 30;
 
 export default class Player {
-	constructor(scene, world) {
+	constructor(scene, world, mapName) {
 		this.world = world;
+
+		const mapFloorHeights = {
+			'collision-world': 2,
+			'art-gallery': 1,
+			'low-poly-playland': 30,
+			'scifi-repair-dock': 30,
+			'squid-game-map': 30,
+		};
 
 		document.body.addEventListener('keydown', (e) => this.onKeyDown(e.code));
 		document.body.addEventListener('keyup', (e) => this.onKeyUp(e.code));
@@ -25,7 +33,11 @@ export default class Player {
 		this.cameraParent = new Object3D();
 		this.isOnFloor = true;
 		this.camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01, 1000);
-		this.collider = new Capsule(new Vector3(0, FLOOR, -2), new Vector3(0, FLOOR + height, -2), 0.35);
+		this.collider = new Capsule(
+			new Vector3(0, mapFloorHeights[mapName], -2),
+			new Vector3(0, mapFloorHeights[mapName] + height, -2),
+			0.35
+		);
 		this.velocity = new Vector3();
 		this.direction = new Vector3();
 		this.cameraParent.add(this.camera);

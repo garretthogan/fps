@@ -39,11 +39,12 @@ function spawnLights(scene) {
 	scene.add(directionalLight);
 }
 
-function loadLevel(scene, worldOctree, file) {
+function loadLevel(scene, worldOctree, file, scale) {
 	const loader = new GLTFLoader().setPath('./models/');
 	loader.load(file, (gltf) => {
+		console.log(file, gltf.scene);
 		scene.add(gltf.scene);
-		file.includes('collision-world') || gltf.scene.scale.set(0.01, 0.01, 0.01);
+		gltf.scene.scale.set(scale.x, scale.y, scale.z);
 
 		worldOctree.fromGraphNode(gltf.scene);
 
@@ -66,12 +67,19 @@ function loadLevel(scene, worldOctree, file) {
 
 export default class World {
 	constructor(lobby, mapName) {
-		console.log({ mapName });
 		this.lobby = lobby;
 		this.lobby.addEventListener(SERVER_CLIENT_JOINED, this.spawnRemotePlayer.bind(this));
 		this.lobby.addEventListener(LOAD_MAP, (serverMapName) => {
-			this.player = new Player(this.scene, this);
-			loadLevel(this.scene, this.worldOctree, `${serverMapName}.glb`);
+			this.player = new Player(this.scene, this, serverMapName);
+			const mapScales = {
+				'collision-world': { x: 1, y: 1, Z: 1 },
+				'art-gallery': { x: 0.01, y: 0.01, z: 0.01 },
+				'low-poly-playland': { x: 0.45, y: 0.45, z: 0.45 },
+				'scifi-repair-dock': { x: 0.2, y: 0.2, z: 0.2 },
+				'squid-game-map': { x: 0.45, y: 0.45, z: 0.45 },
+			};
+
+			loadLevel(this.scene, this.worldOctree, `${serverMapName}.glb`, mapScales[serverMapName]);
 			this.update();
 		});
 
