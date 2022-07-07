@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const server = http.createServer(app);
 
-const { start } = require('./net');
+const { start } = require('./net.js');
 
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ noServer: true });
@@ -16,13 +16,10 @@ server.on('upgrade', (req, socket, head) => {
 	});
 });
 
-app.use(express.static('public'));
-app.get('/:room', (req, res) => {
-	const correctDirectory = __dirname.split('/');
-	correctDirectory.pop();
-
-	res.sendFile(correctDirectory.join('/') + '/public/index.html');
-});
+app.use('/', express.static('public'));
+app.use('/maps/:mapName', express.static('public'));
+app.use('/join/:joinCode', express.static('public'));
+app.use('/create/:mapName', express.static('public'));
 
 const port = process.env.NODE_ENV === 'prod' ? process.env.PORT : 3000;
 server.listen(port, () => {

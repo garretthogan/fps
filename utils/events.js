@@ -17,6 +17,7 @@ const events = {
 	NO_LOBBY: 'lobby does not exist',
 	SERVER_CLIENT_JOINED: 'server client joined',
 	CLIENT_UPDATE_ROTATION: 'client update rotation',
+	LOAD_MAP: 'load map',
 };
 
 module.exports = events;

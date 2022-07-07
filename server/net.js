@@ -21,13 +21,14 @@ module.exports = {
 			const key = createKey();
 			const event = JSON.parse(data);
 			const lobbyId = event.data.lobbyId;
+			const mapName = event.data.mapName;
 
 			const connectedClients = lobbies[lobbyId] ? Object.keys(lobbies[lobbyId].clients) : [];
 
 			switch (event.type) {
 				// user just naviagted to the website
 				case CLIENT_START_GAME:
-					console.log('reserve a lobby and replicate movement');
+					console.log('reserve a lobby on map', mapName ? mapName : 'collition-world');
 					const newClientId = `client_${key}`;
 					const newLobbyId = `lobby_${key}`;
 
@@ -36,6 +37,7 @@ module.exports = {
 						lobbyId: newLobbyId,
 						clients: { [newClientId]: client },
 						maxConnectedClients: 12,
+						mapName: mapName ? mapName : 'collision-world',
 					};
 					client.send(
 						JSON.stringify({

@@ -5,7 +5,7 @@ import { fireProjectile } from './projectilePool';
 const RT = 3;
 const LT = 2;
 
-const FLOOR = -1.75;
+const FLOOR = 1;
 const GRAVITY = 30;
 
 export default class Player {
