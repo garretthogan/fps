@@ -47,6 +47,10 @@ export default class Player {
 	}
 	onKeyUp(keyCode) {
 		this.keyCodes[keyCode] = false;
+		if (keyCode === 'KeyF') {
+			document.body.requestFullscreen();
+			document.body.requestPointerLock();
+		}
 	}
 
 	onRightTriggerDown() {
