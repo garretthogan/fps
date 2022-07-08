@@ -6,6 +6,8 @@ const {
 	SERVER_CLIENT_JOINED,
 	CLIENT_UPDATE_POSITION,
 	SERVER_UPDATE_POSITION,
+	CLIENT_UPDATE_ROTATION,
+	SERVER_UPDATE_ROTATION,
 } = require('../utils/events');
 
 const lobbies = {};
@@ -27,7 +29,7 @@ module.exports = {
 
 			switch (event.type) {
 				// user just naviagted to the website
-				case CLIENT_START_GAME:
+				case CLIENT_START_GAME: {
 					console.log('reserve a lobby on map', mapName ? mapName : 'collition-world');
 					const newClientId = `client_${key}`;
 					const newLobbyId = `lobby_${key}`;
@@ -46,8 +48,9 @@ module.exports = {
 						})
 					);
 					break;
+				}
 
-				case CLIENT_JOIN_LOBBY:
+				case CLIENT_JOIN_LOBBY: {
 					console.log(lobbyId);
 					const lobbyToJoin = lobbies[lobbyId];
 					if (lobbyToJoin) {
@@ -77,7 +80,9 @@ module.exports = {
 						});
 					}
 					break;
-				case CLIENT_UPDATE_POSITION:
+				}
+
+				case CLIENT_UPDATE_POSITION: {
 					const clientId = event.data.clientId;
 					const x = event.data.x;
 					const y = event.data.y;
@@ -88,6 +93,19 @@ module.exports = {
 						);
 					});
 					break;
+				}
+
+				case CLIENT_UPDATE_ROTATION: {
+					const clientId = event.data.clientId;
+					const x = event.data.x;
+					const y = event.data.y;
+					const z = event.data.z;
+					connectedClients.forEach((clientKey) => {
+						lobbies[lobbyId].clients[clientKey].send(
+							JSON.stringify({ type: SERVER_UPDATE_ROTATION, data: { clientId, x, y, z } })
+						);
+					});
+				}
 			}
 		});
 	},

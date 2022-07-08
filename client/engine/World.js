@@ -122,11 +122,11 @@ export default class World {
 			updateProjectilePool(dt, this.worldOctree);
 		}
 
-		//replicate local player position
 		const position = this.player.root.position;
-		const rotation = this.player.root.rotation;
 		this.lobby.updatePlayerPosition(position);
-		this.lobby.updatePlayerRotation(rotation);
+
+		const rotY = this.player.cameraParent.rotation.y;
+		this.lobby.updatePlayerRotation({ x: 0, y: rotY, z: 0 });
 
 		this.renderer.render(this.scene, this.player.camera);
 		requestAnimationFrame(this.update);
