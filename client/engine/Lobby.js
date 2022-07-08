@@ -8,6 +8,7 @@ import {
 	SERVER_CLIENT_JOINED,
 	SERVER_LOBBY_CREATED,
 	SERVER_UPDATE_POSITION,
+	SERVER_UPDATE_ROTATION,
 } from '../../utils/events.js';
 import { RemotePlayer } from './RemotePlayer.js';
 
@@ -137,6 +138,16 @@ export default class Lobby {
 			// console.log(`${clientId} | x:${x} y:${y} z:${z}`);
 		}
 	}
+	onServerUpdateRotation(eventData) {
+		const x = eventData.x;
+		const y = eventData.y;
+		const z = eventData.z;
+		const clientId = eventData.clientId;
+		if (clientId !== this.localClientId) {
+			this.remotePlayers[clientId].root.rotation.y = y;
+			// console.log(`${clientId} | y:${y}`);
+		}
+	}
 
 	onMessage(message) {
 		const event = JSON.parse(message.data);
@@ -151,6 +162,10 @@ export default class Lobby {
 
 			case SERVER_UPDATE_POSITION:
 				this.onServerUpdatePosition(event.data);
+				break;
+
+			case SERVER_UPDATE_ROTATION:
+				this.onServerUpdateRotation(event.data);
 				break;
 		}
 	}
