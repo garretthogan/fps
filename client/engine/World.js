@@ -40,10 +40,9 @@ function spawnLights(scene) {
 	scene.add(directionalLight);
 }
 
-function loadLevel(scene, worldOctree, file, scale) {
+function loadLevel(scene, worldOctree, file, scale, onLoad) {
 	const loader = new GLTFLoader().setPath('./models/');
 	loader.load(file, (gltf) => {
-		console.log(file, gltf.scene);
 		scene.add(gltf.scene);
 		gltf.scene.scale.set(scale.x, scale.y, scale.z);
 
@@ -63,18 +62,17 @@ function loadLevel(scene, worldOctree, file, scale) {
 		const helper = new OctreeHelper(worldOctree);
 		helper.visible = false;
 		scene.add(helper);
+		onLoad(gltf.scene);
 	});
 }
 
 export default class World {
-	constructor(lobby, mapName) {
+	constructor(lobby) {
 		this.lobby = lobby;
 		this.lobby.addEventListener(SERVER_CLIENT_JOINED, this.spawnRemotePlayer.bind(this));
 		this.lobby.addEventListener(LOAD_MAP, (serverMapName) => {
-			this.player = new Player(this.scene, this, serverMapName);
-
-			loadLevel(this.scene, this.worldOctree, `${serverMapName}.glb`, mapScales[serverMapName]);
-			this.update();
+			this.mapName = serverMapName;
+			loadLevel(this.scene, this.worldOctree, `${serverMapName}.glb`, mapScales[serverMapName], this.onLoad.bind(this));
 		});
 
 		window.addEventListener('resize', this.onWindowResize.bind(this));
@@ -101,6 +99,12 @@ export default class World {
 		container.appendChild(this.renderer.domElement);
 
 		this.update = this.update.bind(this);
+	}
+
+	onLoad(level) {
+		this.player = new Player(this.scene, this, this.mapName);
+
+		this.update();
 	}
 
 	spawnRemotePlayer(clientId) {

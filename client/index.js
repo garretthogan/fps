@@ -9,4 +9,4 @@ const mapName = isCreating ? pathName.split('/')[2] : null;
 const joinCode = isJoining ? pathName.split('/')[2] : null;
 
 const lobby = new Lobby(joinCode, mapName);
-new World(lobby, mapName);
+new World(lobby);
