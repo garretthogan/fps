@@ -27,11 +27,11 @@ export default class Player {
 		this.rtUp = true;
 		this.ltUp = true;
 
-		const height = 1.5;
+		const height = 1.85;
 		this.root = new Object3D();
 		this.cameraParent = new Object3D();
 		this.isOnFloor = true;
-		this.camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01, 1000);
+		this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
 		this.collider = new Capsule(
 			new Vector3(0, mapFloorHeights[mapName], -2),
 			new Vector3(0, mapFloorHeights[mapName] + height, -2),
